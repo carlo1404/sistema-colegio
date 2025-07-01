@@ -1,4 +1,4 @@
-# 🎓 Sistema de Gestión Escolar - Colegio Mazamorra
+# 🎓 Sistema de Gestión Escolar 
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.6%2B-blue?logo=python" alt="Python">
