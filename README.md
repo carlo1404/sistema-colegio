@@ -178,7 +178,7 @@ python menu.py
 ---
 
 ## 👨‍💻 Autor
-Sistema desarrollado para gestión escolar de un Colegio y Instituto.
+Sistema desarrollado para gestión escolar de un Colegio y Instituto Elaborado por Santiago Sanchez lopez Carlos Andres Reyes Grajales y Laura Cortez.
 
 ---
 
