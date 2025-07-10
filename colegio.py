@@ -680,6 +680,22 @@ class Colegio:
             return []
         return self.__inasistencias
     
+    def buscar_inasistencias_con_excusa(self):
+        """
+        Retorna todas las inasistencias que tienen excusa.
+        """
+        inasistencias_con_excusa = []
+        for inasistencia in self.__inasistencias:
+            # Verificar si algún estudiante tiene excusa
+            tiene_excusa = False
+            for id_est in inasistencia.get_id_estudiantes_inasistentes():
+                if inasistencia.tiene_excusa_estudiante(id_est):
+                    tiene_excusa = True
+                    break
+            if tiene_excusa:
+                inasistencias_con_excusa.append(inasistencia)
+        return inasistencias_con_excusa
+    
     def get_inasistencias(self):
         """
         Retorna todas las inasistencias registradas.

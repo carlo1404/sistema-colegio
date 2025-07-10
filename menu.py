@@ -1156,13 +1156,17 @@ class Menu:
                 return
             
             print("Día (1-31):")
-            dia = int(input("-> "))
-            
+            dia_str = input("-> ").strip()
+            # Validar que sea un número válido y no tenga más de 2 dígitos
+            if not dia_str.isdigit() or len(dia_str) > 2:
+                print("Error - El día debe ser un número válido de 1 o 2 dígitos")
+                input("Presione Enter para continuar...")
+                return
+            dia = int(dia_str)
             if dia <= 0:
                 print("Error - El día debe ser mayor a 0")
                 input("Presione Enter para continuar...")
                 return
-                
             if dia > 31:
                 print("Error - El día debe estar entre 1 y 31")
                 input("Presione Enter para continuar...")
@@ -1275,13 +1279,17 @@ class Menu:
                 return
             
             print("Día (1-31):")
-            dia = int(input("-> "))
-            
+            dia_str = input("-> ").strip()
+            # Validar que sea un número válido y no tenga más de 2 dígitos
+            if not dia_str.isdigit() or len(dia_str) > 2:
+                print("Error - El día debe ser un número válido de 1 o 2 dígitos")
+                input("Presione Enter para continuar...")
+                return
+            dia = int(dia_str)
             if dia <= 0:
                 print("Error - El día debe ser mayor a 0")
                 input("Presione Enter para continuar...")
                 return
-                
             if dia > 31:
                 print("Error - El día debe estar entre 1 y 31")
                 input("Presione Enter para continuar...")
@@ -1335,10 +1343,8 @@ class Menu:
             input("Presione Enter para continuar...")
 
     def registrar_inasistencia(self):
-
         system('cls')
         print("=== Registrar Inasistencia ===")
-        
         try:
             # 1. Validar ID de fecha
             id_fecha = int(input("Ingresa el id de la fecha a registrar: "))
@@ -1347,180 +1353,130 @@ class Menu:
                 input("Presione Enter para continuar...")
                 return
             
-            # Verificar que el ID no exista ya
-            inacistencias_existentes = self.colegio.get_inasistencias()
-            for insanistencia_existente in inacistencias_existentes:
-                if insanistencia_existente.get_id_inasistencia() == id_fecha:
-                    print("Error - El ID de fecha ya existe")
-                    input("Presione Enter para continuar...")
-                    return
-            
             # 2. Mostrar docentes disponibles
             docentes_habilitados = self.colegio.get_docentes_habilitados()
-            
             if not docentes_habilitados:
                 print("No hay docentes habilitados para registrar inasistencia")
                 input("Presione Enter para continuar...")
                 return
-                
             print("\nDocentes disponibles:")
             for i, docente in enumerate(docentes_habilitados, 1):
                 print(f"{i}. {docente.get_nombre_docente()} {docente.get_apellido_docente()} - {docente.get_materia_docente()}")
-            
-            # 3. Seleccionar docente
             print("\nSeleccione el docente encargado:")
             docente_seleccionado = int(input("-> "))
-            
             if docente_seleccionado <= 0 or docente_seleccionado > len(docentes_habilitados):
                 print(f"Error - Debe seleccionar un número entre 1 y {len(docentes_habilitados)}")
                 input("Presione Enter para continuar...")
                 return
-            
             docente = docentes_habilitados[docente_seleccionado - 1]
             id_docente = docente.get_id_docente()
             
-            # 4. Ingresar fecha completa
+            # 3. Ingresar fecha completa
             print("Ingrese la fecha de la inasistencia:")
-            
             print("Año:")
             año = int(input("-> "))
-            
-            if año <= 0:
-                print("Error - El año debe ser mayor a 0")
+            if año <= 0 or año > date.today().year or año < 2020:
+                print("Error - Año inválido")
                 input("Presione Enter para continuar...")
                 return
-                
-            if año > date.today().year:
-                print("Error - No puede registrar inasistencia para años futuros")
-                input("Presione Enter para continuar...")
-                return
-                
-            if año < 2020:  
-                print("Error - El año debe ser mayor a 2020")
-                input("Presione Enter para continuar...")
-                return
-            
             print("Mes (1-12):")
             mes = int(input("-> "))
-            
-            if mes <= 0:
-                print("Error - El mes debe ser mayor a 0")
+            if mes <= 0 or mes > 12:
+                print("Error - Mes inválido")
                 input("Presione Enter para continuar...")
                 return
-                
-            if mes > 12:
-                print("Error - El mes debe estar entre 1 y 12")
-                input("Presione Enter para continuar...")
-                return
-            
             print("Día (1-31):")
-            dia = int(input("-> "))
-            
-            if dia <= 0:
-                print("Error - El día debe ser mayor a 0")
+            dia_str = input("-> ").strip()
+            if not dia_str.isdigit() or len(dia_str) > 2:
+                print("Error - El día debe ser un número válido de 1 o 2 dígitos")
                 input("Presione Enter para continuar...")
                 return
-                
-            if dia > 31:
-                print("Error - El día debe estar entre 1 y 31")
+            dia = int(dia_str)
+            if dia <= 0 or dia > 31:
+                print("Error - Día inválido")
                 input("Presione Enter para continuar...")
                 return
-            
-            # Validar que la fecha sea válida
             try:
                 fecha_inasistencia = date(año, mes, dia)
             except ValueError:
-                print("Error - Fecha inválida (ej: 31 de febrero no existe)")
+                print("Error - Fecha inválida")
                 input("Presione Enter para continuar...")
                 return
-            
-            # Validar que no sea fecha futura
             if fecha_inasistencia > date.today():
-                print("Error - No puede registrar asistencia para fechas futuras")
+                print("Error - No puede registrar inasistencia para fechas futuras")
                 input("Presione Enter para continuar...")
                 return
-            
-            # 5. Mostrar estudiantes disponibles
+
+            # 4. Buscar asistencia de ese día y docente
+            asistencia_encontrada = None
+            for asistencia in self.colegio.get_asistencias():
+                if asistencia.get_id_asistencia() == id_docente and asistencia.get_fecha() == fecha_inasistencia:
+                    asistencia_encontrada = asistencia
+                    break
+            if not asistencia_encontrada:
+                print("No existe una asistencia registrada para ese docente y fecha. Debe registrar la asistencia primero.")
+                input("Presione Enter para continuar...")
+                return
+
+            # 5. Mostrar estudiantes que asistieron y los que faltaron
             estudiantes_habilitados = self.colegio.get_estudiantes_habilitados()
-            
-            if not estudiantes_habilitados:
-                print("No hay estudiantes habilitados para registrar aisistencia")
-                input("Presione Enter para continuar...")
-                return
-                
-            print(f"\nEstudiantes disponibles (Total: {len(estudiantes_habilitados)}):")
-            for i, estudiante in enumerate(estudiantes_habilitados, 1):
-                print(f"{i}. {estudiante.get_nombre()} {estudiante.get_apellido()} - Curso: {estudiante.get_curso()}")
-            
-            # 6. Ingresar cantidad de estudiantes que faltaron
-            print(f"\n¿Cuántos estudiantes faltaron? (máximo {len(estudiantes_habilitados)}):")
-            cantidad_inasistentes = int(input("-> "))
-            
-            if cantidad_inasistentes <= 0:
-                print("Error - La cantidad de inasistentes debe ser mayor a 0")
-                input("Presione Enter para continuar...")
-                return
-                
-            if cantidad_inasistentes > len(estudiantes_habilitados):
-                print(f"Error - No puede haber más inasistentes ({cantidad_inasistentes}) que estudiantes disponibles ({len(estudiantes_habilitados)})")
-                input("Presione Enter para continuar...")
-                return
-            
-            # 7. Ingresar IDs de estudiantes que faltaron
-            id_estudiantes_inasistieron = []
-            print(f"\nIngrese los IDs de los {cantidad_inasistentes} estudiantes que faltaron:")
-            
-            for i in range(cantidad_inasistentes):
-                try:
-                    id_estudiante = int(input(f"ID del estudiante {i+1}: "))
-                    
-                    # Validar que el ID sea válido
-                    if id_estudiante <= 0:
-                        print("Error - El ID debe ser mayor a 0")
-                        input("Presione Enter para continuar...")
-                        return
-                    
-                    # Verificar que el estudiante existe y está habilitado
-                    estudiante_encontrado = False
-                    for estudiante in estudiantes_habilitados:
-                        if estudiante.get_id() == id_estudiante:
-                            estudiante_encontrado = True
+            cantidad_asistieron = asistencia_encontrada.get_cantidad_estudiantes()
+            print(f"\nEstudiantes que asistieron (según asistencia registrada): {cantidad_asistieron}")
+            # Por ahora solo mostramos la cantidad, pero podrías guardar los IDs de los que asistieron en la asistencia
+            # Para este ejemplo, asumimos que los primeros N estudiantes habilitados son los que asistieron
+            ids_asistieron = []
+            ids_faltaron = []
+            for i, estudiante in enumerate(estudiantes_habilitados):
+                if i < cantidad_asistieron:
+                    ids_asistieron.append(estudiante.get_id())
+                else:
+                    ids_faltaron.append(estudiante.get_id())
+            print("Asistieron:")
+            for id_est in ids_asistieron:
+                nombre = self.colegio.get_nombre_estudiante(id_est)
+                apellido = self.colegio.get_apellido_estudiante(id_est)
+                print(f"- {id_est}: {nombre} {apellido}")
+            print("\nFaltaron:")
+            for id_est in ids_faltaron:
+                nombre = self.colegio.get_nombre_estudiante(id_est)
+                apellido = self.colegio.get_apellido_estudiante(id_est)
+                print(f"- {id_est}: {nombre} {apellido}")
+
+            # 6. Permitir seleccionar a quién marcar como inasistente (por defecto, los que faltaron)
+            print("\n¿Desea cambiar algún estudiante de asistencia a inasistencia? (s/n)")
+            cambiar = input("-> ").strip().lower()
+            if cambiar == 's':
+                print("Ingrese el ID del estudiante que desea marcar como inasistente (0 para terminar):")
+                while True:
+                    try:
+                        id_cambio = int(input("ID: "))
+                        if id_cambio == 0:
                             break
-                    
-                    if not estudiante_encontrado:
-                        print(f"Error - No se encontró un estudiante habilitado con ID {id_estudiante}")
-                        input("Presione Enter para continuar...")
-                        return
-                    
-                    # Verificar que no se haya ingresado el mismo ID antes
-                    if id_estudiante in id_estudiantes_inasistieron:
-                        print(f"Error - El estudiante con ID {id_estudiante} ya fue registrado")
-                        input("Presione Enter para continuar...")
-                        return
-                    
-                    id_estudiantes_inasistieron.append(str(id_estudiante))
-                    
-                except ValueError:
-                    print("Error - Debe ingresar un número válido")
-                    input("Presione Enter para continuar...")
-                    return
-            
-            
-            
-            # 7. Registrar la inasistencia
-            if self.colegio.registrar_inasistencia(id_fecha, id_docente, fecha_inasistencia, cantidad_inasistentes, id_estudiantes_inasistieron):
+                        if id_cambio in ids_asistieron:
+                            ids_asistieron.remove(id_cambio)
+                            ids_faltaron.append(id_cambio)
+                            print(f"Estudiante {id_cambio} movido a inasistentes.")
+                        else:
+                            print("ID no válido o ya está en inasistentes.")
+                    except ValueError:
+                        print("Ingrese un número válido.")
+            # 7. Registrar la inasistencia con los IDs seleccionados
+            if not ids_faltaron:
+                print("No hay estudiantes para registrar como inasistentes.")
+                input("Presione Enter para continuar...")
+                return
+            if self.colegio.registrar_inasistencia(id_fecha, id_docente, fecha_inasistencia, len(ids_faltaron), [str(i) for i in ids_faltaron]):
                 print(f"\n✓ Inasistencia registrada exitosamente!")
                 print(f"  - Docente: {docente.get_nombre_docente()} {docente.get_apellido_docente()}")
                 print(f"  - Materia: {docente.get_materia_docente()}")
                 print(f"  - Fecha: {fecha_inasistencia.strftime('%d/%m/%Y')}")
-                print(f"  - Estudiantes que faltaron: {cantidad_inasistentes}")
-                print(f"  - IDs de estudiantes que faltaron: {id_estudiantes_inasistieron}")
+                print(f"  - Estudiantes que faltaron: {len(ids_faltaron)}")
+                print(f"  - IDs de estudiantes que faltaron: {ids_faltaron}")
                 input("Presione Enter para continuar...")
                 return
             else:
                 print("Error - No se pudo registrar la inasistencia")
                 input("Presione Enter para continuar...")
-                
         except ValueError:
             print("Error - Debe ingresar un número válido")
             input("Presione Enter para continuar...")
@@ -1881,66 +1837,79 @@ class Menu:
         system("cls")
         print("=== Registrar Falta con Excusa ===")
         try:
-            # Mostrar asistencias disponibles
-            asistencias = self.colegio.get_asistencias()
-            if not asistencias:
-                print("No hay asistencias registradas")
+            # Mostrar inasistencias disponibles
+            inasistencias = self.colegio.get_inasistencias()
+            if not inasistencias:
+                print("No hay inasistencias registradas")
                 input("Presione Enter para continuar...")
                 return
-            
-            print("Asistencias disponibles:")
-            print("ID\tFecha\tDocente\tEstudiantes")
-            print("-" * 50)
-            for asistencia in asistencias:
-                # Obtener información del docente
-                id_docente = asistencia.get_id_asistencia()
+            print("Inasistencias disponibles:")
+            print("ID\tFecha\tDocente\tEstudiantes que faltaron")
+            print("-" * 60)
+            for inasistencia in inasistencias:
+                id_inasist = inasistencia.get_id()
+                fecha = inasistencia.get_fecha()
+                id_docente = inasistencia.get_id_inasistencia()
                 nombre_docente = self.colegio.get_nombre_docente(id_docente)
                 apellido_docente = self.colegio.get_apellido_docente(id_docente)
-                docente_info = f"{nombre_docente} {apellido_docente}" if nombre_docente != -1 else f"ID: {id_docente}"
-                
-                print(f"{asistencia.get_id_asistencia()}\t{asistencia.get_fecha_asistencia().strftime('%d/%m/%Y')}\t{docente_info}\t{asistencia.get_cantidad_estudiantes()}")
-            
-            # Seleccionar asistencia
-            id_asistencia = int(input("\nIngrese el ID de la asistencia: "))
-            if id_asistencia <= 0:
-                print("Error - El ID debe ser mayor a 0")
-                input("Presione Enter para continuar...")
-                return
-            
-            # Verificar si la asistencia existe
-            asistencia_encontrada = None
-            for asistencia in asistencias:
-                if asistencia.get_id_asistencia() == id_asistencia:
-                    asistencia_encontrada = asistencia
+                ids_faltaron = inasistencia.get_id_estudiantes_inasistentes()
+                print(f"{id_inasist}\t{fecha.strftime('%d/%m/%Y')}\t{nombre_docente} {apellido_docente}\t{ids_faltaron}")
+            # Seleccionar inasistencia
+            id_inasistencia = int(input("\nIngrese el ID de la inasistencia: "))
+            inasistencia_encontrada = None
+            for inasistencia in inasistencias:
+                if inasistencia.get_id() == id_inasistencia:
+                    inasistencia_encontrada = inasistencia
                     break
-            
-            if not asistencia_encontrada:
-                print("Error - No se encontró la asistencia con ese ID")
+            if not inasistencia_encontrada:
+                print("Error - No se encontró la inasistencia con ese ID")
                 input("Presione Enter para continuar...")
                 return
-            
-            # Verificar si ya tiene excusa
-            if asistencia_encontrada.tiene_excusa():
-                print("Error - Esta asistencia ya tiene una excusa registrada")
+            # Mostrar solo los estudiantes que faltaron
+            ids_faltaron = inasistencia_encontrada.get_id_estudiantes_inasistentes()
+            if not ids_faltaron:
+                print("No hay estudiantes que falten en esta inasistencia")
                 input("Presione Enter para continuar...")
                 return
-            
-            # Ingresar excusa
-            excusa = input("Descripción de la excusa: ")
-            if excusa.strip() == "":
-                print("Error - La excusa no puede estar vacía")
+            print("\nEstudiantes que faltaron:")
+            for id_est in ids_faltaron:
+                nombre = self.colegio.get_nombre_estudiante(int(id_est))
+                apellido = self.colegio.get_apellido_estudiante(int(id_est))
+                tiene_excusa = inasistencia_encontrada.tiene_excusa_estudiante(id_est)
+                excusa_str = "(con excusa)" if tiene_excusa else ""
+                print(f"- {id_est}: {nombre} {apellido} {excusa_str}")
+            # Seleccionar a quién registrar excusa
+            ids_excusa = []
+            while True:
+                id_excusa = input("Ingrese el ID del estudiante que faltó y tendrá excusa (0 para terminar): ").strip()
+                if id_excusa == '0':
+                    break
+                if id_excusa not in ids_faltaron:
+                    print("ID no válido. Solo puede seleccionar estudiantes que faltaron.")
+                    continue
+                if id_excusa in ids_excusa:
+                    print("Ya seleccionó ese estudiante.")
+                    continue
+                if inasistencia_encontrada.tiene_excusa_estudiante(id_excusa):
+                    print("Ya existe una excusa registrada para este estudiante.")
+                    continue
+                ids_excusa.append(id_excusa)
+            if not ids_excusa:
+                print("No seleccionó ningún estudiante para excusa.")
                 input("Presione Enter para continuar...")
                 return
-            
-            # Registrar la excusa
-            if self.colegio.registrar_excusa(id_asistencia, excusa):
-                print("Excusa registrada exitosamente!")
-                input("Presione Enter para continuar...")
-                return
-            else:
-                print("Error - No se pudo registrar la excusa")
-                input("Presione Enter para continuar...")
-                
+            # Registrar motivo de excusa para cada estudiante seleccionado
+            for id_est in ids_excusa:
+                while True:
+                    motivo = input(f"Motivo de la excusa para {id_est} ({self.colegio.get_nombre_estudiante(int(id_est))}): ").strip()
+                    if motivo == "":
+                        print("El motivo no puede estar vacío.")
+                        continue
+                    inasistencia_encontrada.registrar_excusa_estudiante(id_est, motivo)
+                    print(f"Excusa registrada para {id_est}: {motivo}")
+                    break
+            print("\nExcusas registradas exitosamente!")
+            input("Presione Enter para continuar...")
         except ValueError:
             print("Error - Debe ingresar un número válido")
             input("Presione Enter para continuar...")
@@ -1984,19 +1953,55 @@ class Menu:
             print(f"Error al buscar inasistencias: {e}")
             input("Presione Enter para continuar...")
 
+    def listar_inasistencias_con_excusa(self):
+        system("cls")
+        print("=== Listar inasistencias con excusa ===")
+        try:
+            inasistencias_con_excusa = self.colegio.buscar_inasistencias_con_excusa()
+            if not inasistencias_con_excusa:
+                print("No hay inasistencias con excusa registradas")
+                input("Presione Enter para continuar...")
+                return
+            print("ID\tFecha\tDocente\tEstudiantes con excusa")
+            print("-" * 70)
+            contador = 0
+            for inasistencia in inasistencias_con_excusa:
+                try:
+                    id_inasistencia = inasistencia.get_id()
+                    fecha = inasistencia.get_fecha()
+                    estudiantes_con_excusa = []
+                    for id_est in inasistencia.get_id_estudiantes_inasistentes():
+                        if inasistencia.tiene_excusa_estudiante(id_est):
+                            nombre_estudiante = self.colegio.get_nombre_estudiante(int(id_est))
+                            apellido_estudiante = self.colegio.get_apellido_estudiante(int(id_est))
+                            excusa = inasistencia.get_excusa_estudiante(id_est)
+                            estudiantes_con_excusa.append(f"{id_est}: {nombre_estudiante} {apellido_estudiante} (Excusa: {excusa})")
+                    id_docente = inasistencia.get_id_inasistencia()
+                    nombre_docente = self.colegio.get_nombre_docente(id_docente)
+                    apellido_docente = self.colegio.get_apellido_docente(id_docente)
+                    docente_info = f"{nombre_docente} {apellido_docente}" if nombre_docente != -1 else f"ID: {id_docente}"
+                    if estudiantes_con_excusa:
+                        print(f"{id_inasistencia}\t{fecha.strftime('%d/%m/%Y')}\t{docente_info}\t{estudiantes_con_excusa}")
+                        contador += 1
+                except Exception as e:
+                    print(f"Error al procesar inasistencia: {e}")
+                    continue
+            print(f"\nTotal de inasistencias con excusa listadas: {contador}")
+            input("Presione Enter para continuar...")
+        except Exception as e:
+            print(f"Error al listar inasistencias con excusa: {e}")
+            input("Presione Enter para continuar...")
+
     def buscar_inasistencias_sin_excusa(self):
         system("cls")
         print("=== Buscar Inasistencias sin excusa ===")
-        
         try:
             inasistencias_sin_excusa = self.colegio.buscar_inasistencias_sin_excusa()
-            
             if not inasistencias_sin_excusa:
                 print("No hay inasistencias sin excusa registradas")
                 input("Presione Enter para continuar...")
                 return
-
-            print("ID\tFecha\tDocente\tEstudiantes\tEstudiantes sin excusa")
+            print("ID\tFecha\tDocente\tEstudiantes sin excusa")
             print("-" * 70)
             contador = 0
             for inasistencia in inasistencias_sin_excusa:
@@ -2004,37 +2009,24 @@ class Menu:
                     id_inasistencia = inasistencia.get_id()
                     fecha = inasistencia.get_fecha()
                     estudiantes = inasistencia.get_cantidad_estudiantes()
-                    estudiantes_sin_excusa = inasistencia.get_id_estudiantes_inasistentes()
-                    
-                    # Obtener información del docente
+                    estudiantes_sin_excusa = []
+                    for id_est in inasistencia.get_id_estudiantes_inasistentes():
+                        if not inasistencia.tiene_excusa_estudiante(id_est):
+                            nombre_estudiante = self.colegio.get_nombre_estudiante(int(id_est))
+                            apellido_estudiante = self.colegio.get_apellido_estudiante(int(id_est))
+                            estudiantes_sin_excusa.append(f"{id_est}: {nombre_estudiante} {apellido_estudiante}")
                     id_docente = inasistencia.get_id_inasistencia()
                     nombre_docente = self.colegio.get_nombre_docente(id_docente)
                     apellido_docente = self.colegio.get_apellido_docente(id_docente)
                     docente_info = f"{nombre_docente} {apellido_docente}" if nombre_docente != -1 else f"ID: {id_docente}"
-                    
-                    # Obtener información de los estudiantes
-                    nombres_estudiantes = []
-                    for id_estudiante in estudiantes_sin_excusa:
-                        nombre_estudiante = self.colegio.get_nombre_estudiante(int(id_estudiante))
-                        apellido_estudiante = self.colegio.get_apellido_estudiante(int(id_estudiante))
-                        if nombre_estudiante != -1 and apellido_estudiante != -1:
-                            nombres_estudiantes.append(f"{nombre_estudiante} {apellido_estudiante}")
-                        else:
-                            nombres_estudiantes.append(f"ID: {id_estudiante}")
-                    
-                    # Validar que todos los datos estén presentes
-                    if all([id_inasistencia, fecha, estudiantes, estudiantes_sin_excusa]):
-                        print(f"{id_inasistencia}\t{fecha.strftime('%d/%m/%Y')}\t{docente_info}\t{estudiantes}\t{nombres_estudiantes}")
+                    if estudiantes_sin_excusa:
+                        print(f"{id_inasistencia}\t{fecha.strftime('%d/%m/%Y')}\t{docente_info}\t{estudiantes_sin_excusa}")
                         contador += 1
-                    else:
-                        print(f"Error en datos de la inasistencia ID: {id_inasistencia}")
                 except Exception as e:
                     print(f"Error al procesar inasistencia: {e}")
                     continue
-            
             print(f"\nTotal de inasistencias sin excusa listadas: {contador}")
             input("Presione Enter para continuar...")
-            
         except Exception as e:
             print(f"Error al listar inasistencias sin excusa: {e}")
             input("Presione Enter para continuar...")
@@ -2087,6 +2079,7 @@ class Menu:
             print("║ [6] Listar asistencias sin excusa║")
             print("║ [7] Listar todas las asistencias ║")
             print("║ [8] Listar todas las inasistencias║")
+            print("║ [9] Listar inasistencias con excusa║")
             print("╠══════════════════════════════════╣")
             print("║ [0] Salir                        ║")
             print("╚══════════════════════════════════╝")
@@ -2158,6 +2151,8 @@ class Menu:
                 self.listar_todas_asistencias()
             elif opcion == "8":
                 self.listar_todas_inasistencias()
+            elif opcion == "9":
+                self.listar_inasistencias_con_excusa()
             elif opcion == "0" or opcion == "exit":
                 system("cls")
                 print("Saliendo del programa...")
@@ -2226,8 +2221,8 @@ class Menu:
                 input("Presione Enter para continuar...")
                 return
 
-            print("ID\tFecha\tDocente\tEstudiantes\tIDs Estudiantes")
-            print("-" * 80)
+            print("ID\tFecha\tDocente\tEstudiantes\tIDs Estudiantes (Excusa)")
+            print("-" * 100)
             contador = 0
             for inasistencia in todas_inasistencias:
                 try:
@@ -2235,23 +2230,29 @@ class Menu:
                     fecha = inasistencia.get_fecha()
                     estudiantes = inasistencia.get_cantidad_estudiantes()
                     ids_estudiantes = inasistencia.get_id_estudiantes_inasistentes()
-                    
-                    # Obtener información del docente
                     id_docente = inasistencia.get_id_inasistencia()
                     nombre_docente = self.colegio.get_nombre_docente(id_docente)
                     apellido_docente = self.colegio.get_apellido_docente(id_docente)
                     docente_info = f"{nombre_docente} {apellido_docente}" if nombre_docente != -1 else f"ID: {id_docente}"
-                    
-                    # Validar que todos los datos estén presentes
+                    # Mostrar excusa por estudiante
+                    detalles = []
+                    for id_est in ids_estudiantes:
+                        nombre = self.colegio.get_nombre_estudiante(int(id_est))
+                        apellido = self.colegio.get_apellido_estudiante(int(id_est))
+                        excusa = inasistencia.get_excusa_estudiante(id_est)
+                        if excusa:
+                            detalles.append(f"{id_est}: {nombre} {apellido} (Excusa: {excusa})")
+                        else:
+                            detalles.append(f"{id_est}: {nombre} {apellido} (Sin excusa)")
+                    detalles_str = "; ".join(detalles)
                     if all([id_inasist, fecha, estudiantes, ids_estudiantes]):
-                        print(f"{id_inasist}\t{fecha.strftime('%d/%m/%Y')}\t{docente_info}\t{estudiantes}\t{ids_estudiantes}")
+                        print(f"{id_inasist}\t{fecha.strftime('%d/%m/%Y')}\t{docente_info}\t{estudiantes}\t{detalles_str}")
                         contador += 1
                     else:
                         print(f"Error en datos de la inasistencia ID: {id_inasist}")
                 except Exception as e:
                     print(f"Error al procesar inasistencia: {e}")
                     continue
-            
             print(f"\nTotal de inasistencias listadas: {contador}")
             input("Presione Enter para continuar...")
         except Exception as e:

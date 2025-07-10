@@ -8,6 +8,8 @@ class Inasistencia:
         self.__fecha = fecha_inasistencia  # Usar la fecha pasada como parámetro
         self.__cantidad_estudiantes = cantidad_estudiantes
         self.__id_estudiantes_inasistentes = id_estudiantes_inasistentes
+        # Diccionario para excusas por estudiante: {id_estudiante: motivo}
+        self.__excusas_por_estudiante = {}
 
     def establecer_inasistencia(self, id_fecha, id_docente, fecha_inasistencia, cantidad_estudiantes, id_estudiantes_inasistentes):
         self.__id_fecha = id_fecha
@@ -23,6 +25,7 @@ class Inasistencia:
         print("Cantidad de estudiantes:", self.__cantidad_estudiantes)
         print("ID de los estudiantes inasistentes:", self.__id_estudiantes_inasistentes)
         print("Estudiantes que faltaron: ", self.__id_estudiantes_inasistentes)
+        print("Excusas por estudiante:", self.__excusas_por_estudiante)
 
     def get_id(self):
         return self.__id_fecha
@@ -38,3 +41,16 @@ class Inasistencia:
     
     def get_id_estudiantes_inasistentes(self):
         return self.__id_estudiantes_inasistentes
+
+    # Métodos para excusas por estudiante
+    def registrar_excusa_estudiante(self, id_estudiante, motivo):
+        self.__excusas_por_estudiante[str(id_estudiante)] = motivo
+
+    def tiene_excusa_estudiante(self, id_estudiante):
+        return str(id_estudiante) in self.__excusas_por_estudiante
+
+    def get_excusa_estudiante(self, id_estudiante):
+        return self.__excusas_por_estudiante.get(str(id_estudiante), None)
+
+    def get_todos_con_excusa(self):
+        return self.__excusas_por_estudiante.copy()
