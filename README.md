@@ -6,6 +6,10 @@
   <img src="https://img.shields.io/badge/Licencia-Educativa-green" alt="Licencia">
 </p>
 
+<p align="center">
+  <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9a1?w=800&h=400&fit=crop&crop=center" alt="Sistema de Gestión Escolar" width="800" height="400">
+</p>
+
 ---
 
 <p align="center">
@@ -45,6 +49,7 @@ Sistema de gestión escolar desarrollado en Python que permite administrar estud
 | 🏫 Grados             | Registrar, buscar, modificar, habilitar/deshabilitar, listar                   |
 | 🏠 Aulas              | Registrar, buscar, modificar, habilitar/deshabilitar, listar                   |
 | 📅 Asistencias        | Registrar, buscar (por fecha/ID), modificar, excusas, listar con/sin excusa    |
+| ❌ Inasistencias      | Registrar, buscar sin excusa, modificar, listar todas las inasistencias        |
 
 ---
 
@@ -58,6 +63,7 @@ actividad/
 ├── grado.py             # Clase para manejar grados
 ├── aula.py              # Clase para manejar aulas
 ├── asistencia.py        # Clase para manejar asistencias
+├── inasistencia.py      # Clase para manejar inasistencias
 ├── materia.py           # Clase para manejar materias
 └── README.md            # Documentación del proyecto
 ```
@@ -72,6 +78,7 @@ actividad/
 - **Grado**: Representa un grado escolar y su asociación con aulas.
 - **Aula**: Representa un aula física y su capacidad.
 - **Asistencia**: Registra asistencias, fechas, docentes y excusas.
+- **Inasistencia**: Registra inasistencias, fechas, docentes y estudiantes que faltaron.
 
 ---
 
@@ -82,17 +89,46 @@ actividad/
 - **Grados**: ID único, nombre válido, asociación con aulas, cantidad (1-10)
 - **Aulas**: ID único, nombre válido, capacidad (1-15)
 - **Asistencias**: ID único, fecha válida, docente habilitado, cantidad válida, excusas
+- **Inasistencias**: ID único, fecha válida, docente habilitado, cantidad válida, IDs de estudiantes
 
 ---
 
 ## 🖥️ Cómo Ejecutar
 
-1. Asegúrate de tener **Python 3.6+** instalado
-2. Navega al directorio del proyecto
-3. Ejecuta el archivo principal:
+### Requisitos Previos
+- **Python 3.6+** instalado en tu sistema
+- Terminal o línea de comandos
+
+### Instalación y Uso
+
+1. **Clona o descarga el proyecto**
+   ```bash
+   git clone https://github.com/tu-usuario/sistema-gestion-escolar.git
+   cd sistema-gestion-escolar
+   ```
+
+2. **Ejecuta el sistema**
+   ```bash
+   python menu.py
+   ```
+
+3. **Navega por el menú**
+   - Usa las letras (A-Z) para acceder a las funciones principales
+   - Usa los números (1-8) para ver listados
+   - Usa '0' para salir del sistema
+
+### Ejemplo de Uso
 
 ```bash
+# Ejecutar el sistema
 python menu.py
+
+# El sistema mostrará el menú principal:
+# ╔══════════════════════════════════╗
+# ║      Colegio Mazamorra           ║
+# ╠══════════════════════════════════╣
+# ║         MENÚ PRINCIPAL           ║
+# ╚══════════════════════════════════╝
 ```
 
 ---
@@ -132,6 +168,7 @@ python menu.py
 - [5] Listar asistencias con excusa
 - [6] Listar asistencias sin excusa
 - [7] Listar todas las asistencias
+- [8] Listar todas las inasistencias
 </details>
 
 ---
@@ -144,6 +181,20 @@ python menu.py
 - Validación robusta de datos y excepciones específicas
 - Interfaz de usuario clara y organizada
 - Confirmaciones de operaciones exitosas
+
+## 📸 Capturas de Pantalla
+
+<p align="center">
+  <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=300&fit=crop&crop=center" alt="Menú Principal" width="600" height="300">
+  <br>
+  <em>Menú principal del sistema con todas las opciones disponibles</em>
+</p>
+
+<p align="center">
+  <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=300&fit=crop&crop=center" alt="Gestión de Estudiantes" width="600" height="300">
+  <br>
+  <em>Interfaz para gestionar estudiantes del colegio</em>
+</p>
 
 ---
 
@@ -178,8 +229,32 @@ python menu.py
 ---
 
 ## 👨‍💻 Autor
-Sistema desarrollado para gestión escolar de un Colegio y Instituto Elaborado por Santiago Sanchez Hernandez,
-Carlos Andres Reyes Grajales y Laura Cortez.
+Sistema desarrollado para gestión escolar de un Colegio e Instituto.
+
+**Desarrolladores:**
+- Santiago Sanchez Hernandez
+- Carlos Andres Reyes Grajales  
+- Laura Cortez
+
+---
+
+## 🤝 Contribuciones
+
+¡Las contribuciones son bienvenidas! Si quieres mejorar este proyecto:
+
+1. Haz un Fork del proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+---
+
+## 🙏 Agradecimientos
+
+- A todos los docentes y estudiantes que probaron el sistema
+- A la comunidad de Python por las herramientas utilizadas
+- A los desarrolladores de las librerías utilizadas
 
 ---
 

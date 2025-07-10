@@ -39,6 +39,10 @@ class Asistencia:
         self.__id_docente = id_docente
         self.__fecha = fecha
         self.__cantidad_estudiantes = cantidad_estudiantes
+
+
+        
+
         
     def get_fecha_asistencia(self):
         return self.__fecha
